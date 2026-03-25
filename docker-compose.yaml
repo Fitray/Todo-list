@@ -1,0 +1,18 @@
+services:
+  app-postgres:
+    image: dhi.io/postgres:18
+    container_name: app-env-postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - ${PROJECT_ROOT}/out/pgdata:/var/lib/postgresql
+    restart: always
+  
+  app-postgres-migrate:
+    image: migrate/migrate:v4.19.1
+    container_name: app-postgres-migrate
+    volumes:
+      - ${PROJECT_ROOT}/migrations:/migrations
+
