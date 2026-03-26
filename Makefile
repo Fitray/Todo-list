@@ -27,7 +27,7 @@ migrate-create:
 	docker compose run --rm app-postgres-migrate \
 		create \
 		-ext sql \
-		-dir ./migrations \
+		-dir /migrations \
 		-seq "$(seq)"
 
 migrate-action:
@@ -36,12 +36,18 @@ migrate-action:
 		exit 1; \
 	fi; \
 	docker compose run --rm app-postgres-migrate \
-		-path ./migrations \
+		-path /migrations \
 		-database postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@app-postgres:5432/${POSTGRES_DB}?sslmode=disable \
 		$(action)
 
 migrate-up:
-	@$(MAKE) migrate-action action=up
+	@make migrate-action action=up
 
 migrate-down:
-	@$(MAKE) migrate-action action=down
+	@make migrate-action action=down
+
+env-port-forward:
+	@docker compose up -d port-forwarder
+
+env-post-close:
+	@docker compose down -d port-forwarder
